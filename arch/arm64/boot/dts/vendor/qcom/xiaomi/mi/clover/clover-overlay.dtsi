@@ -847,6 +847,9 @@
 &cdc_comp_gpios {
 	status = "okay";
 };
+&wcd9xxx_intc {
+	interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>;
+};
 &mdss_dsi {
 	hw-config = "single_dsi";
 	qcom,mdss-fb-map-prim = <&mdss_fb0>;

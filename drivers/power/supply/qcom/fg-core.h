@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /*
  * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2018 XiaoMi, Inc.
  */
 
 #ifndef __FG_CORE_H__
@@ -326,6 +327,7 @@ struct fg_batt_props {
 	char		*batt_profile;
 	int		float_volt_uv;
 	int		vbatt_full_mv;
+	int 	batt_capacity_mah;
 	int		fastchg_curr_ma;
 	int		*therm_coeffs;
 	int		therm_ctr_offset;
@@ -442,6 +444,7 @@ struct fg_dev {
 	struct fg_memif		sram;
 	struct fg_alg_flag	*alg_flags;
 	int			*debug_mask;
+	char 		*debug_dump;
 	struct fg_batt_props	bp;
 	struct notifier_block	nb;
 	struct alarm            esr_sw_timer;

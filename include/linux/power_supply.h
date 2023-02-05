@@ -372,6 +372,7 @@ enum power_supply_property {
 	POWER_SUPPLY_PROP_MODEL_NAME,
 	POWER_SUPPLY_PROP_MANUFACTURER,
 	POWER_SUPPLY_PROP_BATTERY_TYPE,
+	POWER_SUPPLY_PROP_DUMP_SRAM,
 	POWER_SUPPLY_PROP_CYCLE_COUNTS,
 	/*
 	 * Add local extensions for properties with string values between

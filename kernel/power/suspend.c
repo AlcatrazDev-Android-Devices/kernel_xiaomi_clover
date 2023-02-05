@@ -4,6 +4,7 @@
  * Copyright (c) 2003 Patrick Mochel
  * Copyright (c) 2003 Open Source Development Lab
  * Copyright (c) 2009 Rafael J. Wysocki <rjw@sisk.pl>, Novell Inc.
+ * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This file is released under the GPLv2.
  */
@@ -33,6 +34,8 @@
 #include <linux/compiler.h>
 #include <linux/moduleparam.h>
 #include <linux/wakeup_reason.h>
+
+#include <linux/soc/qcom/smem_state.h>
 
 #include "power.h"
 
@@ -616,6 +619,9 @@ static int enter_state(suspend_state_t state)
 	return error;
 }
 
+#define PROC_AWAKE_ID 12 /* 12th bit */
+#define AWAKE_BIT BIT(PROC_AWAKE_ID)
+extern struct qcom_smem_state *state;
 /**
  * pm_suspend - Externally visible function for suspending the system.
  * @state: System sleep state to enter.
@@ -623,15 +629,17 @@ static int enter_state(suspend_state_t state)
  * Check if the value of @state represents one of the supported states,
  * execute enter_state() and update system suspend statistics.
  */
-int pm_suspend(suspend_state_t state)
+int pm_suspend(suspend_state_t s_state)
 {
 	int error;
 
-	if (state <= PM_SUSPEND_ON || state >= PM_SUSPEND_MAX)
+	if (s_state <= PM_SUSPEND_ON || s_state >= PM_SUSPEND_MAX)
 		return -EINVAL;
 
-	pr_info("suspend entry (%s)\n", mem_sleep_labels[state]);
-	error = enter_state(state);
+	pr_info("suspend entry (%s)\n", mem_sleep_labels[s_state]);
+	qcom_smem_state_update_bits(state, AWAKE_BIT, 0);
+	error = enter_state(s_state);
+	qcom_smem_state_update_bits(state, AWAKE_BIT, AWAKE_BIT);
 	if (error) {
 		suspend_stats.fail++;
 		dpm_save_failed_errno(error);

@@ -216,6 +216,8 @@ struct wled_flash_config {
 	int safety_timer;
 };
 
+static int first_set_prev_state;
+
 struct wled {
 	const char *name;
 	struct platform_device *pdev;
@@ -516,6 +518,11 @@ static int wled_update_status(struct backlight_device *bl)
 					rc);
 				goto unlock_mutex;
 			}
+		}
+
+		if (1 == first_set_prev_state) {
+			wled->prev_state = true;
+			first_set_prev_state = 0;
 		}
 
 		if (!!brightness != wled->prev_state) {
@@ -2349,6 +2356,11 @@ static int wled_probe(struct platform_device *pdev)
 	if (rc < 0) {
 		dev_err(&pdev->dev, "wled configure failed rc:%d\n", rc);
 		return rc;
+	}
+
+	if (strnstr(saved_command_line, "androidboot.mode=ffbm-01",
+		    strlen(saved_command_line))) {
+		first_set_prev_state = 1;
 	}
 
 	mutex_init(&wled->lock);

@@ -22,3 +22,6 @@
 [submodule "drivers/staging/qcacld-3.0"]
 	path = drivers/staging/qcacld-3.0
 	url = https://github.com/AlcatrazDev-Android-Devices/vendor_opensource_wlan_qcacld-3.0
+[submodule "arch/arm64/boot/dts/vendor"]
+	path = arch/arm64/boot/dts/vendor
+	url = https://github.com/AlcatrazDev-Android-Devices/kernel_devicetree

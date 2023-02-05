@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2014-2020, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2018 XiaoMi, Inc.
  */
 #include <linux/module.h>
 #include <linux/suspend.h>
@@ -14,7 +15,7 @@
 
 #define PROC_AWAKE_ID 12 /* 12th bit */
 #define AWAKE_BIT BIT(PROC_AWAKE_ID)
-static struct qcom_smem_state *state;
+struct qcom_smem_state *state;
 static struct wakeup_source *notify_ws;
 
 /**
@@ -31,11 +32,11 @@ static int sleepstate_pm_notifier(struct notifier_block *nb,
 {
 	switch (event) {
 	case PM_SUSPEND_PREPARE:
-		qcom_smem_state_update_bits(state, AWAKE_BIT, 0);
+		// qcom_smem_state_update_bits(state, AWAKE_BIT, 0);
 		break;
 
 	case PM_POST_SUSPEND:
-		qcom_smem_state_update_bits(state, AWAKE_BIT, AWAKE_BIT);
+		// qcom_smem_state_update_bits(state, AWAKE_BIT, AWAKE_BIT);
 		break;
 	}
 

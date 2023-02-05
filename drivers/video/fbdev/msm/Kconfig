@@ -170,4 +170,16 @@ config FB_MSM_MDSS_FRC_DEBUG
 	statistics and check whether its output pattern matches expected
 	cadence.
 
+config HQ_CUSTOM_DISPLAY_FEATURE
+	bool "CONFIG_HQ_CUSTOM_DISPLAY_FEATURE"
+	default n
+	---help---
+	CONFIG_HQ_CUSTOM_DISPLAY_FEATURE
+
+config HQ_USE_DDIC_CABC
+	bool "CONFIG_HQ_USE_DDIC_CABC"
+	default n
+	---help---
+	CONFIG_HQ_USE_DDIC_CABC
+
 endif

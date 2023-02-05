@@ -299,6 +299,11 @@ config QCOM_SCM
 	  world(EL2 and EL3) by using smc call.
 	  SCM driver provides the support for atomic scm calls also.
 
+config SERIAL_NUM
+	bool "Enable Serial Number Proc Interface"
+	help
+	Provide a interface for reading CPU serial number
+
 config QCOM_EARLY_RANDOM
 	bool "Initialize random pool very early"
 	help

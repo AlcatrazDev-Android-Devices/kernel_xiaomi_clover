@@ -5,6 +5,7 @@
  *  Copyright (C) 2008 Intel Corp
  *  Copyright (C) 2008 Zhang Rui <rui.zhang@intel.com>
  *  Copyright (C) 2008 Sujith Thomas <sujith.thomas@intel.com>
+ *  Copyright (C) 2018 XiaoMi, Inc.
  */
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
@@ -940,6 +941,65 @@ static struct class thermal_class = {
 	.dev_release = thermal_release,
 };
 
+unsigned int sconfig;
+
+static ssize_t sconfig_show(struct device *dev,struct device_attribute *attr, char *buf)
+{
+
+
+
+
+	pr_err("sconfig_show sconfig = %d\n",sconfig);
+
+	return sprintf(buf, "%d\n", sconfig);
+}
+
+static ssize_t sconfig_store(struct device *dev,
+			  struct device_attribute *attr, const char *buf, size_t size)
+{
+
+	int ret;
+
+
+	sysfs_notify(&dev->kobj, NULL, "sconfig");
+
+	ret = kstrtoint(buf, 0, &sconfig);
+	if (ret)
+		return ret;
+
+	pr_err("sconfig_store sconfig = %d\n",sconfig);
+
+	return size;
+}
+
+
+static struct device_attribute dev_attr_thermal_config = {
+	.attr = {
+		.name = "sconfig",
+		.mode = 0666,
+	},
+	.show = sconfig_show,
+	.store = sconfig_store,
+};
+
+void thermalsconfig_init(void)
+{
+	static struct device *dev;
+
+	int result;
+	dev = device_create(&thermal_class, NULL, MKDEV(0, 0), NULL, "thermal_message");
+	if (IS_ERR(dev)) {
+		result = PTR_ERR(dev);
+		printk(KERN_ALERT "Failed to create device.\n");
+	}
+	#if 1
+	result = device_create_file(dev, &dev_attr_thermal_config);
+	if (result < 0) {
+		printk(KERN_ALERT"Failed to create attribute file.");
+	}
+	#endif
+}
+
 static inline
 void print_bind_err_msg(struct thermal_zone_device *tz,
 			struct thermal_cooling_device *cdev, int ret)
@@ -1689,6 +1749,8 @@ static int __init thermal_init(void)
 	if (result)
 		pr_warn("Thermal: Can not register suspend notifier, return %d\n",
 			result);
+
+    thermalsconfig_init();
 
 	return 0;
 

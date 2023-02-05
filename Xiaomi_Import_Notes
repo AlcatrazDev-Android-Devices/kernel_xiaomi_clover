@@ -1,0 +1,43 @@
+Exist & need adding:
+sound/soc -> techpack/audio
+
+Exist & Follow android_common:
+security
+net/*[except ipc_router]
+lib
+kernel
+include/*[except linux/sched.h]
+
+Exist & Conflict with android_common:
+mm
+include/linux/sched.h
+fs
+
+Not Exist:
+net/ipc_router
+driver/staging/android/lowmemorykiller.c
+driver/pwm
+drivers/mmc/card/queue.c
+drivers/leds/leds-qpnp-wled.c
+
+Need converting
+drivers/power/supply/qcom/step-chg-jeita.c -> dtsi
+
+==============================================
+
+Start next day:
+
+==============================================
+
+SECOND ROUND ISSUE
+drivers/mmc/card/queue.c - Checked
+drivers/power/supply/qcom/step-chg-jeita.c - Added
+drivers/pwm/pwm-qpnp.c - Checked
+drivers/soc/qcom/smp2p_sleepstate.c <-> kernel/power/suspend.c - Added
+drivers/staging/android/ion/ion_system_heap.c - Added
+drivers/staging/android/lowmemorykiller.c - Checked
+net/ipc_router/ipc_router_core.c - Checked
+
+DTSI ISSUE
+qpnp -> spmi for gpio in pm660(l) - Alternated by Qcom
+sdm660-mtp.dtsi qcom,led-strings-list = [00 01 02]; - Alternated by Qcom

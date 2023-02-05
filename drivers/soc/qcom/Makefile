@@ -110,3 +110,6 @@ obj-$(CONFIG_QTI_CRYPTO_TZ) += crypto-qti-tz.o
 obj-$(CONFIG_QTI_HW_KEY_MANAGER) += hwkm_qti.o
 hwkm_qti-y += hwkm.o
 obj-$(CONFIG_MSM_BAM_DMUX) += bam_dmux.o
+#WENDELL-20180226 added
+obj-$(CONFIG_SERIAL_NUM) += serial_num.o
+#END

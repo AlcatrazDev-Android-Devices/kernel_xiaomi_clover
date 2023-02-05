@@ -1688,3 +1688,11 @@ source "arch/arm64/kvm/Kconfig"
 if CRYPTO
 source "arch/arm64/crypto/Kconfig"
 endif
+
+config BOOT_INFO
+	bool "Boot information from bootloader"
+	default y
+	help
+	 On embedded linux device, we try to collect more information from
+	 bootloader to kernel. eg. powerup reason.
+	 

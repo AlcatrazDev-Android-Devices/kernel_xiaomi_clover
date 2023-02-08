@@ -300,7 +300,7 @@
 	firmware: firmware {
 		android {
 			compatible = "android,firmware";
-			fstab {
+			/*fstab {
 				compatible = "android,fstab";
 				vendor {
 					compatible = "android,vendor";
@@ -310,7 +310,7 @@
 					fsmgr_flags = "wait,slotselect,verify";
 					status = "ok";
 				};
-			};
+			};*/
 		};
 	};
 

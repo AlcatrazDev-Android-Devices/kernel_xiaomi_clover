@@ -1,6 +1,6 @@
 &firmware {
     android {
-        fstab {
+        /* fstab {
             system {
                 compatible = "android,system";
                 dev = "/dev/block/platform/soc/c0c4000.sdhci/by-name/system";
@@ -17,7 +17,7 @@
                 fsmgr_flags = "wait";
                 status = "ok";
             };
-        };
+        };*/
     };
 };
 

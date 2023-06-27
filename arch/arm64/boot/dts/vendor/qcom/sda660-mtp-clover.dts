@@ -14,17 +14,37 @@
 
 /dts-v1/;
 
-#include "sdm660.dtsi"
+#include "sda660.dtsi"
 #include "sdm660-mtp.dtsi"
 #include "sdm660-external-codec.dtsi"
 
 / {
-	model = "Qualcomm Technologies, Inc. SDM 660 PM660 + PM660L MTP, Clover";
-	compatible = "qcom,sdm660-mtp", "qcom,sdm660", "qcom,mtp";
-	qcom,board-id = <8 0>;
+	model = "Qualcomm Technologies, Inc. SDA 660 PM660 + PM660L MTP, Clover";
+	compatible = "qcom,sda660-mtp", "qcom,sda660", "qcom,mtp";
+	qcom,board-id = <11 0>;
     qcom,pmic-id = <0x0001001b 0x0101011a 0x0 0x0>,
-            <0x0001001b 0x0201011a 0x0 0x0>,
-            <0x0001001b 0x0102001a 0x0 0x0>;
+			<0x0001001b 0x0201011a 0x0 0x0>,
+			<0x0001001b 0x0102001a 0x0 0x0>;
+};
+
+/* Enable WLED */
+&pm660l_wled {
+	status = "okay";
+};
+
+/* Enable LCDB */
+&pm660l_lcdb {
+	status = "okay";
+};
+
+/* Disable OLEDB */
+&pm660a_oledb {
+	status = "disabled";
+};
+
+/* Disable LABIBB */
+&pm660a_labibb {
+	status = "disable";
 };
 
 &tavil_snd {

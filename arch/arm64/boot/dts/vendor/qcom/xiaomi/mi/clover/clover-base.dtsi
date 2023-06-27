@@ -1,12 +1,6 @@
 #include "dsi-panel-nt51021-boe-10wu-video.dtsi"
 #include "dsi-panel-nt51021-boe-video.dtsi"
 
-/* Battery Data Reset
-drop mtp -> itech_b00826lf_3000mah_ver1660_jan10th2017
-drop mtp -> ascent_3450mah_averaged_masterslave_oct30th2017 
-*/
-/delete-node/ &mtp_batterydata;
-
 &vendor {
 	clover_batterydata: qcom,battery-data {
 		// dtc extracted with 0x18 qcom,batt-id-range-pct = <0x0f> = 15; -- 15% area of ohm variation

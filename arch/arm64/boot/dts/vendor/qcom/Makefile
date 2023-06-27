@@ -46,7 +46,10 @@ dtb-$(CONFIG_MACH_XIAOMI_WHYRED) := sdm636-mtp-whyred.dtb
 endif
 endif
 ifeq ($(CONFIG_MACH_XIAOMI),y)
-dtb-$(CONFIG_MACH_XIAOMI_CLOVER) := sdm660-mtp-clover.dtb
+dtb-$(CONFIG_MACH_XIAOMI_CLOVER) := \
+        sda660-mtp-clover.dtb \
+        sdm660-mtp-clover.dtb \
+# dtb-$(CONFIG_MACH_XIAOMI_CLOVER) += sdm660-qrd-clover.dtb
 else
 dtb-$(CONFIG_ARCH_SDM660) += sdm660-sim.dtb \
 sdm660-internal-codec-cdp.dtb \

@@ -10,6 +10,7 @@ menuconfig SPECTRA_CAMERA
       IFE and postprocessing drivers.
 
 source "drivers/media/platform/msm/vidc_3x/Kconfig"
+source "drivers/media/platform/msm/vidc/Kconfig"
 
 menuconfig MSM_CAMERA
      bool "QTI MSM camera and video capture support"

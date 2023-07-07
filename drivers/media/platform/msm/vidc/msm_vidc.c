@@ -324,7 +324,7 @@ struct buffer_info *get_registered_buf(struct msm_vidc_inst *inst,
 	int fd = b->m.planes[idx].reserved[0];
 	u32 buff_off = b->m.planes[idx].reserved[1];
 	u32 size = b->m.planes[idx].length;
-	ion_phys_addr_t device_addr = b->m.planes[idx].m.userptr;
+	phys_addr_t device_addr = b->m.planes[idx].m.userptr;
 
 	if (fd < 0 || !plane) {
 		dprintk(VIDC_ERR, "Invalid input\n");
@@ -405,7 +405,7 @@ err_invalid_input:
 }
 
 struct buffer_info *device_to_uvaddr(struct msm_vidc_list *buf_list,
-				ion_phys_addr_t device_addr)
+				phys_addr_t device_addr)
 {
 	struct buffer_info *temp = NULL;
 	bool found = false;
@@ -1209,7 +1209,7 @@ int msm_vidc_enum_framesizes(void *instance, struct v4l2_frmsizeenum *fsize)
 }
 EXPORT_SYMBOL(msm_vidc_enum_framesizes);
 
-static void *vidc_get_userptr(void *alloc_ctx, unsigned long vaddr,
+static void *vidc_get_userptr(struct device *dev, unsigned long vaddr,
 				unsigned long size, enum dma_data_direction dma_dir)
 {
 	return (void *)0xdeadbeef;

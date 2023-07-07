@@ -15,7 +15,7 @@
 
 #include <linux/bitops.h>
 #include <linux/clk.h>
-#include <linux/clk/msm-clk.h>
+// #include <linux/clk/msm-clk.h>
 #include <linux/delay.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>

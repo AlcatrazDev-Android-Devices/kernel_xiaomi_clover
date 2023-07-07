@@ -395,7 +395,7 @@ static ssize_t inst_info_read(struct file *file, char __user *buf,
 		for (j = 0; j < inst->prop.num_planes[i]; j++)
 			cur += write_str(cur, end - cur,
 			"size for plane %d: %u\n", j,
-			inst->bufq[i].vb2_bufq.plane_sizes[j]);
+			inst->bufq[i].plane_sizes[j]);
 
 		if (i < MAX_PORT_NUM - 1)
 			cur += write_str(cur, end - cur, "\n");

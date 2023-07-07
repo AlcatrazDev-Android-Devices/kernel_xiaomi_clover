@@ -13,7 +13,7 @@
 
 #include <asm/dma-iommu.h>
 #include <linux/iommu.h>
-#include <linux/qcom_iommu.h>
+// #include <linux/qcom_iommu.h>
 #include <linux/of.h>
 #include <linux/slab.h>
 #include <linux/sort.h>

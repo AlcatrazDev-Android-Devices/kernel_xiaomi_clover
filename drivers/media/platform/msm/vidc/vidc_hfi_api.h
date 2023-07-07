@@ -1031,8 +1031,8 @@ struct vidc_buffer_addr_info {
 	enum hal_buffer buffer_type;
 	u32 buffer_size;
 	u32 num_buffers;
-	ion_phys_addr_t align_device_addr;
-	ion_phys_addr_t extradata_addr;
+	phys_addr_t align_device_addr;
+	phys_addr_t extradata_addr;
 	u32 extradata_size;
 	u32 response_required;
 };
@@ -1059,8 +1059,8 @@ struct vidc_uncompressed_frame_config {
 
 struct vidc_frame_data {
 	enum hal_buffer buffer_type;
-	ion_phys_addr_t device_addr;
-	ion_phys_addr_t extradata_addr;
+	phys_addr_t device_addr;
+	phys_addr_t extradata_addr;
 	int64_t timestamp;
 	u32 flags;
 	u32 offset;
@@ -1073,7 +1073,7 @@ struct vidc_frame_data {
 };
 
 struct vidc_seq_hdr {
-	ion_phys_addr_t seq_hdr;
+	phys_addr_t seq_hdr;
 	u32 seq_hdr_len;
 };
 
@@ -1257,8 +1257,8 @@ struct vidc_hal_ebd {
 	u32 alloc_len;
 	u32 filled_len;
 	enum hal_picture picture_type;
-	ion_phys_addr_t packet_buffer;
-	ion_phys_addr_t extra_data_buffer;
+	phys_addr_t packet_buffer;
+	phys_addr_t extra_data_buffer;
 };
 
 struct vidc_hal_fbd {
@@ -1280,18 +1280,18 @@ struct vidc_hal_fbd {
 	u32 input_tag;
 	u32 input_tag1;
 	enum hal_picture picture_type;
-	ion_phys_addr_t packet_buffer1;
-	ion_phys_addr_t extra_data_buffer;
+	phys_addr_t packet_buffer1;
+	phys_addr_t extra_data_buffer;
 	u32 flags2;
 	u32 alloc_len2;
 	u32 filled_len2;
 	u32 offset2;
-	ion_phys_addr_t packet_buffer2;
+	phys_addr_t packet_buffer2;
 	u32 flags3;
 	u32 alloc_len3;
 	u32 filled_len3;
 	u32 offset3;
-	ion_phys_addr_t packet_buffer3;
+	phys_addr_t packet_buffer3;
 	enum hal_buffer buffer_type;
 };
 
@@ -1367,8 +1367,8 @@ struct msm_vidc_cb_event {
 	u32 width;
 	enum msm_vidc_pixel_depth bit_depth;
 	u32 hal_event_type;
-	ion_phys_addr_t packet_buffer;
-	ion_phys_addr_t extra_data_buffer;
+	phys_addr_t packet_buffer;
+	phys_addr_t extra_data_buffer;
 	u32 pic_struct;
 	u32 colour_space;
 };

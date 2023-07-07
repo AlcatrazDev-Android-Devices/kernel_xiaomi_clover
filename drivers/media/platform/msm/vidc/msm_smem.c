@@ -12,7 +12,6 @@
  */
 
 #include <asm/dma-iommu.h>
-#include <linux/dma-attrs.h>
 #include <linux/dma-buf.h>
 #include <linux/dma-direction.h>
 #include <linux/iommu.h>
@@ -33,7 +32,7 @@ struct smem_client {
 
 static int get_device_address(struct smem_client *smem_client,
 		struct ion_handle *hndl, unsigned long align,
-		ion_phys_addr_t *iova, unsigned long *buffer_size,
+		phys_addr_t *iova, unsigned long *buffer_size,
 		unsigned long flags, enum hal_buffer buffer_type,
 		struct dma_mapping_info *mapping_info)
 {
@@ -206,7 +205,7 @@ static int ion_user_to_kernel(struct smem_client *client, int fd, u32 size,
 		struct msm_smem *mem, enum hal_buffer buffer_type)
 {
 	struct ion_handle *hndl;
-	ion_phys_addr_t iova = 0;
+	phys_addr_t iova = 0;
 	unsigned long buffer_size = size;
 	int rc = 0;
 	unsigned long align = SZ_4K;
@@ -305,7 +304,7 @@ static int alloc_ion_mem(struct smem_client *client, size_t size, u32 align,
 	int map_kernel)
 {
 	struct ion_handle *hndl;
-	ion_phys_addr_t iova = 0;
+	phys_addr_t iova = 0;
 	unsigned long buffer_size = 0;
 	unsigned long heap_mask = 0;
 	int rc = 0;

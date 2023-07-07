@@ -13,7 +13,7 @@
 
 #include <asm/dma-iommu.h>
 #include <asm/memory.h>
-#include <linux/clk/msm-clk.h>
+// #include <linux/clk/msm-clk.h>
 #include <linux/coresight-stm.h>
 #include <linux/delay.h>
 #include <linux/devfreq.h>
@@ -2065,7 +2065,7 @@ static int __interface_queues_init(struct venus_hfi_device *dev)
 	q_hdr = iface_q->q_hdr;
 	q_hdr->qhdr_start_addr = (u32)iface_q->q_array.align_device_addr;
 	q_hdr->qhdr_type |= HFI_Q_ID_HOST_TO_CTRL_CMD_Q;
-	if ((ion_phys_addr_t)q_hdr->qhdr_start_addr !=
+	if ((phys_addr_t)q_hdr->qhdr_start_addr !=
 		iface_q->q_array.align_device_addr) {
 		dprintk(VIDC_ERR, "Invalid CMDQ device address (%pa)",
 			&iface_q->q_array.align_device_addr);
@@ -2075,7 +2075,7 @@ static int __interface_queues_init(struct venus_hfi_device *dev)
 	q_hdr = iface_q->q_hdr;
 	q_hdr->qhdr_start_addr = (u32)iface_q->q_array.align_device_addr;
 	q_hdr->qhdr_type |= HFI_Q_ID_CTRL_TO_HOST_MSG_Q;
-	if ((ion_phys_addr_t)q_hdr->qhdr_start_addr !=
+	if ((phys_addr_t)q_hdr->qhdr_start_addr !=
 		iface_q->q_array.align_device_addr) {
 		dprintk(VIDC_ERR, "Invalid MSGQ device address (%pa)",
 			&iface_q->q_array.align_device_addr);
@@ -2090,14 +2090,14 @@ static int __interface_queues_init(struct venus_hfi_device *dev)
 	 * need of interrupt from video hardware for debug messages
 	 */
 	q_hdr->qhdr_rx_req = 0;
-	if ((ion_phys_addr_t)q_hdr->qhdr_start_addr !=
+	if ((phys_addr_t)q_hdr->qhdr_start_addr !=
 		iface_q->q_array.align_device_addr) {
 		dprintk(VIDC_ERR, "Invalid DBGQ device address (%pa)",
 			&iface_q->q_array.align_device_addr);
 	}
 
 	value = (u32)dev->iface_q_table.align_device_addr;
-	if ((ion_phys_addr_t)value !=
+	if ((phys_addr_t)value !=
 		dev->iface_q_table.align_device_addr) {
 		dprintk(VIDC_ERR,
 			"Invalid iface_q_table device address (%pa)",
@@ -2111,7 +2111,7 @@ static int __interface_queues_init(struct venus_hfi_device *dev)
 			sizeof(struct hfi_mem_map_table);
 		qdss->mem_map_table_base_addr =
 			(u32)mem_map_table_base_addr;
-		if ((ion_phys_addr_t)qdss->mem_map_table_base_addr !=
+		if ((phys_addr_t)qdss->mem_map_table_base_addr !=
 				mem_map_table_base_addr) {
 			dprintk(VIDC_ERR,
 					"Invalid mem_map_table_base_addr (%#lx)",
@@ -2139,7 +2139,7 @@ static int __interface_queues_init(struct venus_hfi_device *dev)
 		}
 
 		value = (u32)dev->qdss.align_device_addr;
-		if ((ion_phys_addr_t)value !=
+		if ((phys_addr_t)value !=
 				dev->qdss.align_device_addr) {
 			dprintk(VIDC_ERR, "Invalid qdss device address (%pa)",
 					&dev->qdss.align_device_addr);
@@ -2149,7 +2149,7 @@ static int __interface_queues_init(struct venus_hfi_device *dev)
 	vsfr = (struct hfi_sfr_struct *) dev->sfr.align_virtual_addr;
 	vsfr->bufSize = ALIGNED_SFR_SIZE;
 	value = (u32)dev->sfr.align_device_addr;
-	if ((ion_phys_addr_t)value !=
+	if ((phys_addr_t)value !=
 		dev->sfr.align_device_addr) {
 		dprintk(VIDC_ERR, "Invalid sfr device address (%pa)",
 			&dev->sfr.align_device_addr);
@@ -3404,7 +3404,7 @@ static void __flush_debug_queue(struct venus_hfi_device *device, u8 *packet)
 	}
 
 	if (!packet) {
-		packet = kzalloc(VIDC_IFACEQ_VAR_HUGE_PKT_SIZE, GFP_TEMPORARY);
+		packet = kzalloc(VIDC_IFACEQ_VAR_HUGE_PKT_SIZE, GFP_KERNEL);
 		if (!packet) {
 			dprintk(VIDC_ERR, "In %s() Fail to allocate mem\n",
 				__func__);
@@ -4079,7 +4079,7 @@ static int __init_resources(struct venus_hfi_device *device,
 
 	device->sys_init_capabilities =
 		kzalloc(sizeof(struct msm_vidc_capability)
-		* VIDC_MAX_SESSIONS, GFP_TEMPORARY);
+		* VIDC_MAX_SESSIONS, GFP_KERNEL);
 
 	return rc;
 
@@ -4665,7 +4665,7 @@ static struct venus_hfi_device *__add_device(u32 device_id,
 	}
 
 	hdevice->raw_packet =
-		kzalloc(VIDC_IFACEQ_VAR_HUGE_PKT_SIZE, GFP_TEMPORARY);
+		kzalloc(VIDC_IFACEQ_VAR_HUGE_PKT_SIZE, GFP_KERNEL);
 	if (!hdevice->raw_packet) {
 		dprintk(VIDC_ERR, "failed to allocate raw packet\n");
 		goto err_cleanup;

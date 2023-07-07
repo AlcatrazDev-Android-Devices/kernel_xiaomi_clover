@@ -1571,9 +1571,9 @@ static int hfi_process_session_etb_done(u32 device_id,
 	data_done.input_done.offset = pkt->offset;
 	data_done.input_done.filled_len = pkt->filled_len;
 	data_done.input_done.packet_buffer =
-		(ion_phys_addr_t)pkt->packet_buffer;
+		(phys_addr_t)pkt->packet_buffer;
 	data_done.input_done.extra_data_buffer =
-		(ion_phys_addr_t)pkt->extra_data_buffer;
+		(phys_addr_t)pkt->extra_data_buffer;
 	data_done.input_done.status =
 		hfi_map_err_status(pkt->error_type);
 	is_sync_frame = pkt->rgData[0];
@@ -1667,9 +1667,9 @@ static int hfi_process_session_ftb_done(
 		data_done.output_done.filled_len1 = pkt->filled_len;
 		data_done.output_done.picture_type = pkt->picture_type;
 		data_done.output_done.packet_buffer1 =
-			(ion_phys_addr_t)pkt->packet_buffer;
+			(phys_addr_t)pkt->packet_buffer;
 		data_done.output_done.extra_data_buffer =
-			(ion_phys_addr_t)pkt->extra_data_buffer;
+			(phys_addr_t)pkt->extra_data_buffer;
 		data_done.output_done.buffer_type = HAL_BUFFER_OUTPUT;
 	} else /* if (is_decoder) */ {
 		struct hfi_msg_session_fbd_uncompressed_plane0_packet *pkt =
@@ -1938,7 +1938,7 @@ static int hfi_process_session_get_seq_hdr_done(
 	data_done.session_id = (void *)(uintptr_t)pkt->session_id;
 	data_done.status = hfi_map_err_status(pkt->error_type);
 	data_done.output_done.packet_buffer1 =
-		(ion_phys_addr_t)pkt->sequence_header;
+		(phys_addr_t)pkt->sequence_header;
 	data_done.output_done.filled_len1 = pkt->header_len;
 	dprintk(VIDC_INFO, "seq_hdr: %#x, Length: %d\n",
 			pkt->sequence_header, pkt->header_len);

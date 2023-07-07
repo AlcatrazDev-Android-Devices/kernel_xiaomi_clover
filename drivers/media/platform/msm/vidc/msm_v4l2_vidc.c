@@ -609,7 +609,10 @@ static int msm_vidc_probe_vidc_device(struct platform_device *pdev)
 		goto err_fail_sub_device_probe;
 	}
 
+#ifdef CONFIG_MSM_BOOT_TIME_MARKER
 	place_marker("M - DRIVER Video Ready");
+#endif
+
 	return rc;
 
 err_fail_sub_device_probe:

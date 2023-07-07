@@ -192,6 +192,13 @@ static const char *const iframe_sizes[] = {
 	"Unlimited"
 };
 
+#define V4L2_CID_MPEG_VIDC_VIDEO_SEND_SKIPPED_FRAME \
+		(V4L2_CID_MPEG_MSM_VIDC_BASE + 103)
+enum v4l2_mpeg_vidc_video_venc_send_skipped_frame {
+	V4L2_MPEG_VIDC_VIDEO_SEND_SKIPPED_FRAME_DISABLE = 0,
+	V4L2_MPEG_VIDC_VIDEO_SEND_SKIPPED_FRAME_ENABLE = 1
+};
+
 static struct msm_vidc_ctrl msm_venc_ctrls[] = {
 	{
 		.id = V4L2_CID_MPEG_VIDC_VIDEO_IDR_PERIOD,
@@ -715,14 +722,14 @@ static struct msm_vidc_ctrl msm_venc_ctrls[] = {
 		.name = "Intra Refresh Mode",
 		.type = V4L2_CTRL_TYPE_MENU,
 		.minimum = V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_NONE,
-		.maximum = V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_RANDOM,
+		.maximum = V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_RANDOMMODE,
 		.default_value = V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_NONE,
 		.menu_skip_mask = ~(
 		(1 << V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_NONE) |
 		(1 << V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_CYCLIC) |
 		(1 << V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_ADAPTIVE) |
 		(1 << V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_CYCLIC_ADAPTIVE) |
-		(1 << V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_RANDOM)
+		(1 << V4L2_CID_MPEG_VIDC_VIDEO_INTRA_REFRESH_RANDOMMODE)
 		),
 		.qmenu = intra_refresh_modes,
 	},
@@ -830,7 +837,7 @@ static struct msm_vidc_ctrl msm_venc_ctrls[] = {
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_MB_QUANTIZATION) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_INTERLACE_VIDEO) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_VC1_FRAMEDISP) |
-			(1 << V4L2_MPEG_VIDC_EXTRADATA_VC1_SEQDISP) |
+			(1ULL << V4L2_MPEG_VIDC_EXTRADATA_VC1_SEQDISP) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_TIMESTAMP) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_S3D_FRAME_PACKING) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_FRAME_RATE) |
@@ -844,7 +851,7 @@ static struct msm_vidc_ctrl msm_venc_ctrls[] = {
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_ASPECT_RATIO) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_LTR) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_METADATA_MBI) |
-			(1 << V4L2_MPEG_VIDC_EXTRADATA_YUV_STATS)|
+			(1ULL << V4L2_MPEG_VIDC_EXTRADATA_YUV_STATS)|
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_ROI_QP) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_PQ_INFO)
 			),
@@ -1602,7 +1609,6 @@ static void msm_venc_register_extradata(
 }
 
 static int msm_venc_queue_setup(struct vb2_queue *q,
-				const void *parg,
 				unsigned int *num_buffers,
 				unsigned int *num_planes, unsigned int sizes[],
 				void *alloc_ctxs[])
@@ -4176,7 +4182,7 @@ int msm_venc_querycap(struct msm_vidc_inst *inst, struct v4l2_capability *cap)
 	strlcpy(cap->driver, MSM_VIDC_DRV_NAME, sizeof(cap->driver));
 	strlcpy(cap->card, MSM_VENC_DVC_NAME, sizeof(cap->card));
 	cap->bus_info[0] = 0;
-	cap->version = MSM_VIDC_VERSION;
+	// cap->version = MSM_VIDC_VERSION;
 	cap->device_caps = V4L2_CAP_VIDEO_CAPTURE_MPLANE |
 						V4L2_CAP_VIDEO_OUTPUT_MPLANE |
 						V4L2_CAP_STREAMING;
@@ -4433,10 +4439,10 @@ int msm_venc_g_fmt(struct msm_vidc_inst *inst, struct v4l2_format *f)
 
 	for (i = 0; i < num_planes; ++i) {
 		if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-			inst->bufq[OUTPUT_PORT].vb2_bufq.plane_sizes[i] =
+			inst->bufq[OUTPUT_PORT].plane_sizes[i] =
 				f->fmt.pix_mp.plane_fmt[i].sizeimage;
 		} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-			inst->bufq[CAPTURE_PORT].vb2_bufq.plane_sizes[i] =
+			inst->bufq[CAPTURE_PORT].plane_sizes[i] =
 				f->fmt.pix_mp.plane_fmt[i].sizeimage;
 		}
 	}

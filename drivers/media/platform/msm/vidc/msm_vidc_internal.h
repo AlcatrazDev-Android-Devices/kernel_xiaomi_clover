@@ -37,7 +37,7 @@
 #include "vidc_hfi_api.h"
 
 #define MSM_VIDC_DRV_NAME "msm_vidc_driver"
-#define MSM_VIDC_VERSION KERNEL_VERSION(0, 0, 1);
+// #define MSM_VIDC_VERSION KERNEL_VERSION(0, 0, 1);
 #define MAX_DEBUGFS_NAME 50
 #define DEFAULT_TIMEOUT 3
 #define DEFAULT_HEIGHT 1088
@@ -173,6 +173,7 @@ struct session_prop {
 struct buf_queue {
 	struct vb2_queue vb2_bufq;
 	struct mutex lock;
+	unsigned int plane_sizes[VB2_MAX_PLANES];
 };
 
 enum profiling_points {
@@ -346,7 +347,7 @@ struct buffer_info {
 	int buff_off[VIDEO_MAX_PLANES];
 	int size[VIDEO_MAX_PLANES];
 	unsigned long uvaddr[VIDEO_MAX_PLANES];
-	ion_phys_addr_t device_addr[VIDEO_MAX_PLANES];
+	phys_addr_t device_addr[VIDEO_MAX_PLANES];
 	struct msm_smem *handle[VIDEO_MAX_PLANES];
 	enum v4l2_memory memory;
 	u32 v4l2_index;
@@ -361,7 +362,7 @@ struct buffer_info {
 };
 
 struct buffer_info *device_to_uvaddr(struct msm_vidc_list *buf_list,
-				ion_phys_addr_t device_addr);
+				phys_addr_t device_addr);
 int buf_ref_get(struct msm_vidc_inst *inst, struct buffer_info *binfo);
 int buf_ref_put(struct msm_vidc_inst *inst, struct buffer_info *binfo);
 int output_buffer_cache_invalidate(struct msm_vidc_inst *inst,

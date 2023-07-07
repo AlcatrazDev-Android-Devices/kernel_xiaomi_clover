@@ -127,6 +127,13 @@ static const char *const mpeg_vidc_video_dpb_color_format[] = {
 	"DPB Color Format UBWC TP10",
 };
 
+#define V4L2_CID_MPEG_VIDC_VIDEO_ALLOW_UBWC_LINEAR_EVENT \
+		(V4L2_CID_MPEG_MSM_VIDC_BASE + 104)
+enum v4l2_mpeg_vidc_video_allow_ubwc_linear_event {
+	V4L2_MPEG_VIDC_VIDEO_ALLOW_UBWC_LINEAR_EVENT_DISABLE = 0,
+	V4L2_MPEG_VIDC_VIDEO_ALLOW_UBWC_LINEAR_EVENT_ENABLE = 1
+};
+
 static struct msm_vidc_ctrl msm_vdec_ctrls[] = {
 	{
 		.id = V4L2_CID_MPEG_VIDC_VIDEO_STREAM_FORMAT,
@@ -258,7 +265,7 @@ static struct msm_vidc_ctrl msm_vdec_ctrls[] = {
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_MB_QUANTIZATION) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_INTERLACE_VIDEO) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_VC1_FRAMEDISP) |
-			(1 << V4L2_MPEG_VIDC_EXTRADATA_VC1_SEQDISP) |
+			(1ULL << V4L2_MPEG_VIDC_EXTRADATA_VC1_SEQDISP) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_TIMESTAMP) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_S3D_FRAME_PACKING) |
 			(1 << V4L2_MPEG_VIDC_EXTRADATA_FRAME_RATE) |
@@ -1137,7 +1144,7 @@ int msm_vdec_g_fmt(struct msm_vidc_inst *inst, struct v4l2_format *f)
 	scanlines = inst->prop.height[CAPTURE_PORT];
 
 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-		plane_sizes = &inst->bufq[OUTPUT_PORT].vb2_bufq.plane_sizes[0];
+		plane_sizes = &inst->bufq[OUTPUT_PORT].plane_sizes[0];
 		for (i = 0; i < num_planes; ++i) {
 			if (!plane_sizes[i]) {
 				f->fmt.pix_mp.plane_fmt[i].sizeimage =
@@ -1190,7 +1197,7 @@ int msm_vdec_g_fmt(struct msm_vidc_inst *inst, struct v4l2_format *f)
 		}
 
 		for (i = 0; i < num_planes; ++i)
-			inst->bufq[CAPTURE_PORT].vb2_bufq.plane_sizes[i] =
+			inst->bufq[CAPTURE_PORT].plane_sizes[i] =
 				f->fmt.pix_mp.plane_fmt[i].sizeimage;
 
 		f->fmt.pix_mp.height = inst->prop.height[CAPTURE_PORT];
@@ -1298,7 +1305,7 @@ int msm_vdec_s_fmt(struct msm_vidc_inst *inst, struct v4l2_format *f)
 
 		f->fmt.pix_mp.num_planes = inst->prop.num_planes[fmt->type];
 		for (i = 0; i < inst->prop.num_planes[fmt->type]; ++i) {
-			inst->bufq[CAPTURE_PORT].vb2_bufq.plane_sizes[i] =
+			inst->bufq[CAPTURE_PORT].plane_sizes[i] =
 				f->fmt.pix_mp.plane_fmt[i].sizeimage;
 		}
 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
@@ -1366,7 +1373,7 @@ int msm_vdec_s_fmt(struct msm_vidc_inst *inst, struct v4l2_format *f)
 
 		f->fmt.pix_mp.num_planes = inst->prop.num_planes[fmt->type];
 		for (i = 0; i < inst->prop.num_planes[fmt->type]; ++i) {
-			inst->bufq[OUTPUT_PORT].vb2_bufq.plane_sizes[i] =
+			inst->bufq[OUTPUT_PORT].plane_sizes[i] =
 				f->fmt.pix_mp.plane_fmt[i].sizeimage;
 		}
 
@@ -1386,7 +1393,7 @@ int msm_vdec_querycap(struct msm_vidc_inst *inst, struct v4l2_capability *cap)
 	strlcpy(cap->driver, MSM_VIDC_DRV_NAME, sizeof(cap->driver));
 	strlcpy(cap->card, MSM_VDEC_DVC_NAME, sizeof(cap->card));
 	cap->bus_info[0] = 0;
-	cap->version = MSM_VIDC_VERSION;
+	// cap->version = MSM_VIDC_VERSION;
 	cap->device_caps = V4L2_CAP_VIDEO_CAPTURE_MPLANE |
 						V4L2_CAP_VIDEO_OUTPUT_MPLANE |
 						V4L2_CAP_STREAMING;
@@ -1567,7 +1574,7 @@ static int msm_vdec_queue_setup(struct vb2_queue *q,
 				inst->buff_req.buffer[1].buffer_count_actual,
 				inst->buff_req.buffer[1].buffer_size,
 				inst->buff_req.buffer[1].buffer_alignment);
-		sizes[0] = inst->bufq[CAPTURE_PORT].vb2_bufq.plane_sizes[0];
+		sizes[0] = inst->bufq[CAPTURE_PORT].plane_sizes[0];
 
 		/*
 		 * Set actual buffer count to firmware for DPB buffers.

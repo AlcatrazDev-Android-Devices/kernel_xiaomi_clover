@@ -506,7 +506,7 @@ static int msm_comm_vote_bus(struct msm_vidc_core *core)
 		++vote_data_count;
 
 	vote_data = kzalloc(sizeof(*vote_data) * vote_data_count,
-			GFP_TEMPORARY);
+			GFP_KERNEL);
 	if (!vote_data) {
 		dprintk(VIDC_ERR, "%s: failed to allocate memory\n", __func__);
 		rc = -ENOMEM;
@@ -1136,7 +1136,7 @@ static void handle_event_change(enum hal_command_response cmd, void *data)
 	case HAL_EVENT_SEQ_CHANGED_SUFFICIENT_RESOURCES:
 		rc = msm_comm_g_ctrl_for_id(inst,
 			V4L2_CID_MPEG_VIDC_VIDEO_CONTINUE_DATA_TRANSFER);
-		if ((IS_ERR_VALUE(rc) || rc == false))
+		if ((IS_ERR_VALUE((unsigned long)rc) || rc == false))
 			event = V4L2_EVENT_SEQ_CHANGED_INSUFFICIENT;
 		else
 			event = V4L2_EVENT_SEQ_CHANGED_SUFFICIENT;
@@ -1844,6 +1844,8 @@ static struct vb2_buffer *get_vb_from_device_addr(struct buf_queue *bufq,
 	return vb;
 }
 
+#define V4L2_QCOM_BUF_DATA_CORRUPT		0x00400000
+
 static void handle_ebd(enum hal_command_response cmd, void *data)
 {
 	struct msm_vidc_cb_data_done *response = data;
@@ -1986,7 +1988,7 @@ int buf_ref_put(struct msm_vidc_inst *inst, struct buffer_info *binfo)
 }
 
 static void handle_dynamic_buffer(struct msm_vidc_inst *inst,
-		ion_phys_addr_t device_addr, u32 flags)
+		phys_addr_t device_addr, u32 flags)
 {
 	struct buffer_info *binfo = NULL, *temp = NULL;
 
@@ -2025,7 +2027,7 @@ static void handle_dynamic_buffer(struct msm_vidc_inst *inst,
 }
 
 static int handle_multi_stream_buffers(struct msm_vidc_inst *inst,
-		ion_phys_addr_t dev_addr)
+		phys_addr_t dev_addr)
 {
 	struct internal_buf *binfo;
 	struct msm_smem *handle;
@@ -2152,8 +2154,7 @@ static void handle_fbd(enum hal_command_response cmd, void *data)
 					fill_buf_done->timestamp_hi,
 					fill_buf_done->timestamp_lo);
 		}
-		vbuf->timestamp =
-			ns_to_timeval(time_usec * NSEC_PER_USEC);
+		vb->timestamp = (time_usec * NSEC_PER_USEC);
 		vbuf->flags = 0;
 		extra_idx =
 			EXTRADATA_IDX(inst->prop.num_planes[CAPTURE_PORT]);
@@ -2273,7 +2274,7 @@ static void handle_seq_hdr_done(enum hal_command_response cmd, void *data)
 	vb->planes[0].data_offset = fill_buf_done->offset1;
 
 	vbuf->flags = V4L2_QCOM_BUF_FLAG_CODECCONFIG;
-	vbuf->timestamp = ns_to_timeval(0);
+	vb->timestamp = 0;
 
 	dprintk(VIDC_DBG, "Filled length = %d; offset = %d; flags %x\n",
 				vb->planes[0].bytesused,
@@ -3614,7 +3615,7 @@ int msm_vidc_comm_cmd(void *instance, union msm_v4l2_cmd *cmd)
 
 
 	switch (which_cmd) {
-	case V4L2_DEC_QCOM_CMD_FLUSH:
+	case V4L2_CMD_FLUSH:
 		if (core->state != VIDC_CORE_INVALID &&
 			inst->state ==  MSM_VIDC_CORE_INVALID) {
 			rc = msm_comm_kill_session(inst);
@@ -3647,7 +3648,7 @@ static void populate_frame_data(struct vidc_frame_data *data,
 		OUTPUT_PORT : CAPTURE_PORT;
 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
 
-	time_usec = timeval_to_ns(&vbuf->timestamp);
+	time_usec = vb->timestamp;
 	do_div(time_usec, NSEC_PER_USEC);
 
 	data->alloc_len = vb->planes[0].length;
@@ -4751,7 +4752,7 @@ int msm_comm_flush(struct msm_vidc_inst *inst, u32 flags)
 
 
 enum hal_extradata_id msm_comm_get_hal_extradata_index(
-	enum v4l2_mpeg_vidc_extradata index)
+	enum v4l2_mpeg_vidc3x_extradata index)
 {
 	int ret = 0;
 	switch (index) {

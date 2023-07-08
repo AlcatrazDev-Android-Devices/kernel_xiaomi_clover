@@ -67,7 +67,7 @@ static struct {
 	const char *reg_name;
 	void __iomem *reg_base;
 	struct device *iommu_ctx_bank_dev;
-	struct dma_iommu_mapping *mapping;
+	struct iommu_domain *domain;
 	dma_addr_t fw_iova;
 	bool is_booted;
 	bool hw_ver_checked;
@@ -143,16 +143,15 @@ static int venus_setup_cb(struct device *dev,
 	dma_addr_t va_start = 0x0;
 	size_t va_size = size;
 
-	venus_data->mapping = arm_iommu_create_mapping(
-		dev->bus, va_start, va_size);
-	if (IS_ERR_OR_NULL(venus_data->mapping)) {
+	venus_data->domain = iommu_get_domain_for_dev(dev);
+	if (IS_ERR_OR_NULL(venus_data->domain)) {
 		dprintk(VIDC_ERR, "%s: failed to create mapping for %s\n",
 		__func__, dev_name(dev));
 		return -ENODEV;
 	}
 	dprintk(VIDC_DBG,
 		"%s Attached device %pK and created mapping %pK for %s\n",
-		__func__, dev, venus_data->mapping, dev_name(dev));
+		__func__, dev, venus_data->domain, dev_name(dev));
 	return 0;
 }
 
@@ -160,7 +159,7 @@ static int pil_venus_mem_setup(size_t size)
 {
 	int rc = 0;
 
-	if (!venus_data->mapping) {
+	if (!venus_data->domain) {
 		size = round_up(size, SZ_4K);
 		rc = venus_setup_cb(venus_data->iommu_ctx_bank_dev, size);
 		if (rc) {
@@ -254,19 +253,11 @@ static int pil_venus_auth_and_reset(void)
 	if (iommu_present) {
 		phys_addr_t pa = fw_bias;
 
-		rc = arm_iommu_attach_device(dev, venus_data->mapping);
-		if (rc) {
-			dprintk(VIDC_ERR,
-				"Failed to attach iommu for %s : %d\n",
-				dev_name(dev), rc);
-			goto release_mapping;
-		}
-
 		dprintk(VIDC_DBG, "Attached and created mapping for %s\n",
 				dev_name(dev));
 
 		/* Map virtual addr space 0 - fw_sz to fw phys addr space */
-		rc = iommu_map(venus_data->mapping->domain,
+		rc = iommu_map(venus_data->domain,
 			venus_data->fw_iova, pa, venus_data->fw_sz,
 			IOMMU_READ|IOMMU_WRITE|IOMMU_PRIV);
 		if (!rc) {
@@ -278,7 +269,7 @@ static int pil_venus_auth_and_reset(void)
 		if (rc || (venus_data->fw_iova != 0)) {
 			dprintk(VIDC_ERR, "%s - Failed to setup IOMMU\n",
 					dev_name(dev));
-			goto err_iommu_map;
+			goto err;
 		}
 	}
 	/* Bring Arm9 out of reset */
@@ -287,12 +278,6 @@ static int pil_venus_auth_and_reset(void)
 	venus_data->is_booted = 1;
 	return 0;
 
-err_iommu_map:
-	if (iommu_present)
-		arm_iommu_detach_device(dev);
-release_mapping:
-	if (iommu_present)
-		arm_iommu_release_mapping(venus_data->mapping);
 err:
 	return rc;
 }
@@ -315,9 +300,8 @@ static int pil_venus_shutdown(void)
 	mb();
 
 	if (is_iommu_present(venus_data->resources)) {
-		iommu_unmap(venus_data->mapping->domain, venus_data->fw_iova,
+		iommu_unmap(venus_data->domain, venus_data->fw_iova,
 			venus_data->fw_sz);
-		arm_iommu_detach_device(venus_data->iommu_ctx_bank_dev);
 	}
 	/*
 	 * Force the VBIF clk to be on to avoid AXI bridge halt ack failure

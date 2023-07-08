@@ -2192,7 +2192,7 @@ int create_pkt_cmd_session_set_property(
 		signal_info->enable = true;
 		signal_info->video_format = MSM_VIDC_NTSC;
 		signal_info->video_full_range = hal->full_range;
-		signal_info->color_description = MSM_VIDC_COLOR_DESC_PRESENT;
+		signal_info->color_description = 1; // MSM_VIDC_COLOR_DESC_PRESENT
 		signal_info->color_primaries = hal->color_space;
 		signal_info->transfer_characteristics = hal->transfer_chars;
 		signal_info->matrix_coeffs = hal->matrix_coeffs;

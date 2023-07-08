@@ -94,7 +94,7 @@ int msm_vidc_querycap(void *instance, struct v4l2_capability *cap)
 
 	strlcpy(cap->driver, MSM_VIDC_DRV_NAME, sizeof(cap->driver));
 	cap->bus_info[0] = 0;
-	cap->version = MSM_VIDC_VERSION;
+	// cap->version = MSM_VIDC_VERSION;
 	cap->device_caps = V4L2_CAP_VIDEO_CAPTURE_MPLANE |
 		V4L2_CAP_VIDEO_OUTPUT_MPLANE |
 		V4L2_CAP_STREAMING;
@@ -1836,9 +1836,13 @@ static const struct v4l2_ctrl_ops msm_vidc_ctrl_ops = {
 	.g_volatile_ctrl = msm_vidc_op_g_volatile_ctrl,
 };
 
-static void batch_timer_callback(unsigned long data)
+static void batch_timer_callback(struct timer_list *tlist)
 {
-	struct msm_vidc_inst *inst = (struct msm_vidc_inst *)data;
+	struct msm_vidc_inst *inst = container_of(tlist,
+						struct msm_vidc_inst,
+						batch_timer);
+	if (!inst)
+		return;
 
 	if (!inst->batch.enable)
 		return;
@@ -1983,8 +1987,8 @@ void *msm_vidc_open(int core_id, int session_type)
 	}
 
 	INIT_WORK(&inst->batch_work, msm_vidc_batch_handler);
-	setup_timer(&inst->batch_timer,
-				batch_timer_callback, (unsigned long)inst);
+	timer_setup(&inst->batch_timer,
+				batch_timer_callback, 0);
 
 	return inst;
 fail_init:

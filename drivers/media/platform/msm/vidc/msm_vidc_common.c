@@ -2408,6 +2408,8 @@ int msm_comm_vb2_buffer_done(struct msm_vidc_inst *inst,
 	return 0;
 }
 
+#define V4L2_CID_MPEG_VIDC_VIDEO_IDR_PERIOD   (V4L2_CID_MPEG_MSM_VIDC_BASE+5)
+
 bool heic_encode_session_supported(struct msm_vidc_inst *inst)
 {
 	u32 slice_mode;
@@ -5383,7 +5385,7 @@ int msm_comm_flush(struct msm_vidc_inst *inst, u32 flags)
 }
 
 enum hal_extradata_id msm_comm_get_hal_extradata_index(
-	enum v4l2_mpeg_vidc_extradata index)
+	enum v4l2_mpeg_vidc3x_extradata index)
 {
 	int ret = 0;
 

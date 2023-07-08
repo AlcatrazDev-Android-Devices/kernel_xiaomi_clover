@@ -144,7 +144,7 @@ void msm_comm_validate_output_buffers(struct msm_vidc_inst *inst);
 int msm_comm_force_cleanup(struct msm_vidc_inst *inst);
 int msm_comm_suspend(int core_id);
 enum hal_extradata_id msm_comm_get_hal_extradata_index(
-	enum v4l2_mpeg_vidc_extradata index);
+	enum v4l2_mpeg_vidc3x_extradata index);
 int msm_comm_reset_bufreqs(struct msm_vidc_inst *inst,
 	enum hal_buffer buf_type);
 int msm_comm_copy_bufreqs(struct msm_vidc_inst *inst,

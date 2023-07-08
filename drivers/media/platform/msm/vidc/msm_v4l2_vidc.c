@@ -534,7 +534,9 @@ static int msm_vidc_probe_vidc_device(struct platform_device *pdev)
 	struct device *dev;
 	int nr = BASE_DEVICE_NUMBER;
 
+#ifdef CONFIG_MSM_BOOT_TIME_MARKER
 	place_marker("M - DRIVER Video Start");
+#endif
 
 	if (!vidc_driver) {
 		dprintk(VIDC_ERR, "Invalid vidc driver\n");
@@ -641,8 +643,9 @@ static int msm_vidc_probe_vidc_device(struct platform_device *pdev)
 		dprintk(VIDC_ERR, "Failed to trigger probe for sub-devices\n");
 		goto err_fail_sub_device_probe;
 	}
-
+#ifdef CONFIG_MSM_BOOT_TIME_MARKER
 	place_marker("M - DRIVER Video Ready");
+#endif
 	return rc;
 
 err_fail_sub_device_probe:
@@ -785,7 +788,9 @@ static int msm_vidc_pm_suspend(struct device *dev)
 
 static int msm_vidc_pm_resume(struct device *dev)
 {
+#ifdef CONFIG_MSM_BOOT_TIME_MARKER
 	place_marker("vidc resumed");
+#endif
 	dprintk(VIDC_INFO, "%s\n", __func__);
 	return 0;
 }
@@ -855,11 +860,13 @@ static int msm_vidc_pm_freeze(struct device *dev)
 		return 0;
 
 	if (of_device_is_compatible(dev->of_node, "qcom,msm-vidc")) {
+#ifdef CONFIG_MSM_BOOT_TIME_MARKER
 		place_marker("vidc hibernation start");
-
+#endif
 		rc = msm_vidc_freeze_core(core);
-
+#ifdef CONFIG_MSM_BOOT_TIME_MARKER
 		place_marker("vidc hibernation end");
+#endif
 	}
 
 	dprintk(VIDC_INFO, "%s: done\n", __func__);

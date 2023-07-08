@@ -163,6 +163,8 @@ static const char *const roi_map_type[] = {
 	"2-byte"
 };
 
+#define V4L2_CID_MPEG_VIDC_VIDEO_IDR_PERIOD   (V4L2_CID_MPEG_MSM_VIDC_BASE+5)
+
 static struct msm_vidc_ctrl msm_venc_ctrls[] = {
 	{
 		.id = V4L2_CID_MPEG_VIDC_VIDEO_IDR_PERIOD,

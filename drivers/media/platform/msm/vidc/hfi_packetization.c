@@ -606,7 +606,7 @@ static int get_hfi_extradata_id(enum hal_extradata_id index)
 		ret = MSM_VIDC_EXTRADATA_OUTPUT_CROP;
 		break;
 	case HAL_EXTRADATA_INPUT_CROP:
-		ret = MSM_VIDC_EXTRADATA_INPUT_CROP;
+		ret = 0x0700000E; //MSM_VIDC_EXTRADATA_INPUT_CROP
 		break;
 	default:
 		ret = get_hfi_extradata_index(index);
@@ -1862,7 +1862,7 @@ int create_pkt_cmd_session_set_property(
 		signal_info->enable = true;
 		signal_info->video_format = MSM_VIDC_NTSC;
 		signal_info->video_full_range = hal->full_range;
-		signal_info->color_description = MSM_VIDC_COLOR_DESC_PRESENT;
+		signal_info->color_description = 1; // MSM_VIDC_COLOR_DESC_PRESENT
 		signal_info->color_primaries = hal->color_space;
 		signal_info->transfer_characteristics = hal->transfer_chars;
 		signal_info->matrix_coeffs = hal->matrix_coeffs;
